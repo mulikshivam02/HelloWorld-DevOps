@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: helloworld
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mulikshivam02/HelloWorld-DevOps.git
+    targetRevision: main
+    path: k8s
+    directory:
+      recurse: true
+      exclude: '{*.example.yaml}'
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: helloworld
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
