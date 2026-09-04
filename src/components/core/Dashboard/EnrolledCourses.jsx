@@ -3,11 +3,9 @@ import ProgressBar from "@ramonak/react-progress-bar"
 import { BiDotsVerticalRounded } from "react-icons/bi"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { useSelector } from "react-redux"
+
 
 import { getUserEnrolledCourses } from "../../../services/operations/profileAPI"
-
-import { useSelector } from "react-redux"
 import { AiOutlineDownload } from "react-icons/ai"
 
 import { generateCertificate } from "../../../services/operations/certificateAPI"

@@ -3,12 +3,11 @@ import { BsChevronDown } from "react-icons/bs"
 import { IoIosArrowBack } from "react-icons/io"
 import { useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { useEffect, useState } from "react"
-import { useEffect, useState } from "react"
+
 import { AiOutlineDownload } from "react-icons/ai"
 import { generateCertificate } from "../../../services/operations/certificateAPI"
 
-import { useSelector } from "react-redux"
+
 
 import IconBtn from "../../Common/IconBtn"
 

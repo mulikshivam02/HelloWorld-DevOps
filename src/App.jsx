@@ -35,9 +35,9 @@ import ViewCourse from "./pages/ViewCourse"
 import { getUserDetails } from "./services/operations/profileAPI"
 import { ACCOUNT_TYPE } from "./utils/constants"
 
-import ViewCourse from "./pages/ViewCourse"
+
 import VerifyCertificate from "./pages/VerifyCertificate"
-import ViewCourse from "./pages/ViewCourse"
+
 
 
 function App() {
