@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: helloworld-ingress
   namespace: helloworld
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
 spec:
   ingressClassName: nginx
   rules:
