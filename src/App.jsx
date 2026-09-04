@@ -35,6 +35,11 @@ import ViewCourse from "./pages/ViewCourse"
 import { getUserDetails } from "./services/operations/profileAPI"
 import { ACCOUNT_TYPE } from "./utils/constants"
 
+import ViewCourse from "./pages/ViewCourse"
+import VerifyCertificate from "./pages/VerifyCertificate"
+import ViewCourse from "./pages/ViewCourse"
+
+
 function App() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -56,7 +61,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="courses/:courseId" element={<CourseDetails />} />
-        <Route path="catalog/:catalogName" element={<Catalog />} />
+                <Route path="catalog/:catalogName" element={<Catalog />} />
+        <Route path="verify-certificate/:code" element={<VerifyCertificate />} />
         {/* Open Route - for Only Non Logged in User */}
         <Route
           path="login"

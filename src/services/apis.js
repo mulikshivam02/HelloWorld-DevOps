@@ -76,3 +76,9 @@ export const settingsEndpoints = {
 export const aiEndpoints = {
   AI_SUMMARY_API: BASE_URL + "/ai/summarize-video",
 }
+
+// CERTIFICATE ENDPOINTS
+export const certificateEndpoints = {
+  GENERATE_CERTIFICATE_API: BASE_URL + "/certificate/generate",
+  VERIFY_CERTIFICATE_API: BASE_URL + "/certificate/verify",
+}

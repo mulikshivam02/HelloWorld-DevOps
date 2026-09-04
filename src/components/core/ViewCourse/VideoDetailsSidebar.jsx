@@ -3,6 +3,12 @@ import { BsChevronDown } from "react-icons/bs"
 import { IoIosArrowBack } from "react-icons/io"
 import { useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
+import { AiOutlineDownload } from "react-icons/ai"
+import { generateCertificate } from "../../../services/operations/certificateAPI"
+
+import { useSelector } from "react-redux"
 
 import IconBtn from "../../Common/IconBtn"
 
@@ -12,12 +18,23 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
   const navigate = useNavigate()
   const location = useLocation()
   const { sectionId, subSectionId } = useParams()
-  const {
+    const {
     courseSectionData,
     courseEntireData,
     totalNoOfLectures,
     completedLectures,
   } = useSelector((state) => state.viewCourse)
+  const { token } = useSelector((state) => state.auth)
+  const [isGeneratingCert, setIsGeneratingCert] = useState(false)
+
+  const isCourseComplete =
+    totalNoOfLectures > 0 && completedLectures?.length === totalNoOfLectures
+
+  const handleDownloadCertificate = async () => {
+    setIsGeneratingCert(true)
+    await generateCertificate(courseEntireData?._id, token)
+    setIsGeneratingCert(false)
+  }
 
   useEffect(() => {
     ;(() => {
@@ -58,12 +75,32 @@ export default function VideoDetailsSidebar({ setReviewModal }) {
               onclick={() => setReviewModal(true)}
             />
           </div>
+          
           <div className="flex flex-col">
             <p>{courseEntireData?.courseName}</p>
             <p className="text-sm font-semibold text-richblack-500">
               {completedLectures?.length} / {totalNoOfLectures}
             </p>
+            <button
+              onClick={handleDownloadCertificate}
+              disabled={!isCourseComplete || isGeneratingCert}
+              title={
+                isCourseComplete
+                  ? "Download your certificate"
+                  : "Complete all lectures to unlock your certificate"
+              }
+              className={`mt-2 flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-semibold ${
+                isCourseComplete
+                  ? "cursor-pointer bg-yellow-50 text-richblack-900 hover:scale-95"
+                  : "cursor-not-allowed bg-richblack-700 text-richblack-400"
+              }`}
+            >
+              <AiOutlineDownload />
+              {isGeneratingCert ? "Generating..." : "Get Certificate"}
+            </button>
           </div>
+
+
         </div>
 
         <div className="h-[calc(100vh - 5rem)] overflow-y-auto">

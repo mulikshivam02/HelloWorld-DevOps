@@ -3,8 +3,14 @@ import ProgressBar from "@ramonak/react-progress-bar"
 import { BiDotsVerticalRounded } from "react-icons/bi"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux"
 
 import { getUserEnrolledCourses } from "../../../services/operations/profileAPI"
+
+import { useSelector } from "react-redux"
+import { AiOutlineDownload } from "react-icons/ai"
+
+import { generateCertificate } from "../../../services/operations/certificateAPI"
 
 export default function EnrolledCourses() {
   const { token } = useSelector((state) => state.auth)
@@ -83,6 +89,7 @@ export default function EnrolledCourses() {
                 </div>
               </div>
               <div className="w-1/4 px-2 py-3">{course?.totalDuration}</div>
+              
               <div className="flex w-1/5 flex-col gap-2 px-2 py-3">
                 <p>Progress: {course.progressPercentage || 0}%</p>
                 <ProgressBar
@@ -90,7 +97,16 @@ export default function EnrolledCourses() {
                   height="8px"
                   isLabelVisible={false}
                 />
+                {course.progressPercentage === 100 && (
+                  <button
+                    onClick={() => generateCertificate(course._id, token)}
+                    className="mt-1 flex w-fit items-center gap-1 text-xs font-semibold text-yellow-50 hover:underline"
+                  >
+                    <AiOutlineDownload /> Get Certificate
+                  </button>
+                )}
               </div>
+
             </div>
           ))}
         </div>
