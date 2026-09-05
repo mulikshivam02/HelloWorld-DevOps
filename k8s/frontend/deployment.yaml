@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/mulikshivam02/helloworld-devops/frontend:latest
+          image: ghcr.io/mulikshivam02/helloworld-devops/frontend:7e530a08ae2566479d7c4269b1a993e8825064a4
           ports:
             - containerPort: 80
           resources:
