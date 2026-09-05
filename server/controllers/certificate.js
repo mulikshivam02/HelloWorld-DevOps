@@ -1,11 +1,15 @@
+const path = require("path")
+const crypto = require("crypto")
 const PDFDocument = require("pdfkit")
 const QRCode = require("qrcode")
-const crypto = require("crypto")
 
 const Course = require("../models/Course")
 const CourseProgress = require("../models/CourseProgress")
 const Certificate = require("../models/Certificate")
 const User = require("../models/User")
+
+const toTitleCase = (str) =>
+  str.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
 
 // POST /api/v1/certificate/generate   body: { courseId }
 exports.generateCertificate = async (req, res) => {
@@ -58,14 +62,14 @@ exports.generateCertificate = async (req, res) => {
     let certificate = await Certificate.findOne({ course: courseId, user: userId })
 
     if (!certificate) {
-        const verificationCode = crypto.randomBytes(6).toString("hex").toUpperCase()
+      const verificationCode = crypto.randomBytes(6).toString("hex").toUpperCase()
       certificate = await Certificate.create({
         course: courseId,
         user: userId,
-        studentName: `${student.firstName} ${student.lastName}`,
+        studentName: toTitleCase(`${student.firstName} ${student.lastName}`),
         courseName: course.courseName,
         instructorName: course.instructor
-          ? `${course.instructor.firstName} ${course.instructor.lastName}`
+          ? toTitleCase(`${course.instructor.firstName} ${course.instructor.lastName}`)
           : "",
         verificationCode,
       })
@@ -81,7 +85,7 @@ exports.generateCertificate = async (req, res) => {
       `attachment; filename="certificate-${course.courseName.replace(/\s+/g, "-")}.pdf"`
     )
 
-        const doc = new PDFDocument({ layout: "landscape", size: "A4", margin: 50 })
+    const doc = new PDFDocument({ layout: "landscape", size: "A4", margin: 50 })
     doc.pipe(res)
 
     const W = doc.page.width
@@ -95,24 +99,13 @@ exports.generateCertificate = async (req, res) => {
     doc.lineWidth(2).strokeColor(GOLD).rect(20, 20, W - 40, H - 40).stroke()
     doc.lineWidth(0.75).strokeColor(DARK).rect(30, 30, W - 60, H - 60).stroke()
 
-    // ---- Logo mark (drawn, not an image file - "H" monogram) ----
-    doc.circle(70, 72, 22).fill(DARK)
-    doc
-      .fontSize(22)
-      .font("Helvetica-Bold")
-      .fillColor(GOLD)
-      .text("H", 58, 61, { width: 24, align: "center" })
-
-    doc
-      .fontSize(20)
-      .font("Helvetica-Bold")
-      .fillColor(DARK)
-      .text("HelloWorld", 102, 56)
+    // ---- Logo (real site logo) ----
+    doc.image(path.join(__dirname, "../assets/logo.png"), 60, 45, { height: 42 })
     doc
       .fontSize(9)
       .font("Helvetica")
       .fillColor(GRAY)
-      .text("Online Learning Platform", 102, 79)
+      .text("Online Learning Platform", 60, 91)
 
     // ---- Title ----
     doc
@@ -183,12 +176,22 @@ exports.generateCertificate = async (req, res) => {
     // Seal
     const sealX = W / 2
     const sealY = H - 95
-    doc.circle(sealX, sealY, 38).lineWidth(2).strokeColor(GOLD).stroke()
-    doc.circle(sealX, sealY, 30).fill(DARK)
-    doc.fontSize(9).font("Helvetica-Bold").fillColor(GOLD)
-      .text("HELLOWORLD", sealX - 35, sealY - 12, { width: 70, align: "center" })
-    doc.fontSize(7).font("Helvetica").fillColor(GOLD)
-      .text("VERIFIED", sealX - 35, sealY + 2, { width: 70, align: "center" })
+    doc.circle(sealX, sealY, 36).lineWidth(2).strokeColor(GOLD).stroke()
+    doc.circle(sealX, sealY, 32).fill(DARK)
+    doc
+      .lineWidth(3)
+      .strokeColor(GOLD)
+      .lineCap("round")
+      .lineJoin("round")
+      .moveTo(sealX - 13, sealY - 4)
+      .lineTo(sealX - 3, sealY + 6)
+      .lineTo(sealX + 15, sealY - 12)
+      .stroke()
+    doc
+      .fontSize(8)
+      .font("Helvetica-Bold")
+      .fillColor(GOLD)
+      .text("VERIFIED", sealX - 32, sealY + 10, { width: 64, align: "center" })
 
     // QR
     doc.image(qrBuffer, W - 150, footerY + 5, { width: 80 })
