@@ -1,6 +1,6 @@
 const PDFDocument = require("pdfkit")
 const QRCode = require("qrcode")
-const cryptoRandomString = require("crypto-random-string")
+const crypto = require("crypto")
 
 const Course = require("../models/Course")
 const CourseProgress = require("../models/CourseProgress")
@@ -58,7 +58,7 @@ exports.generateCertificate = async (req, res) => {
     let certificate = await Certificate.findOne({ course: courseId, user: userId })
 
     if (!certificate) {
-      const verificationCode = cryptoRandomString({ length: 12, type: "alphanumeric" }).toUpperCase()
+        const verificationCode = crypto.randomBytes(6).toString("hex").toUpperCase()
       certificate = await Certificate.create({
         course: courseId,
         user: userId,
