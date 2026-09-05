@@ -14,6 +14,9 @@ ARG REACT_APP_RAZORPAY_KEY
 ENV REACT_APP_BASE_URL=${REACT_APP_BASE_URL} \
     REACT_APP_RAZORPAY_KEY=${REACT_APP_RAZORPAY_KEY}
 
+ENV GENERATE_SOURCEMAP=false \
+    NODE_OPTIONS=--max-old-space-size=3072
+
 RUN npm run build
 
 # ---- Stage 2: Serve with nginx ----
