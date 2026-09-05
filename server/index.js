@@ -56,7 +56,7 @@ app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/reach", contactUsRoute);
 app.use("/api/v1/ai", aiRoutes);
 
-app.use("/api/v1/course", courseRoutes);
+
 app.use("/api/v1/course", courseRoutes);
 app.use("/api/v1/certificate", certificateRoutes);
 
