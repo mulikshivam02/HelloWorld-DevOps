@@ -14,7 +14,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { cloudinaryConnect } = require("./config/cloudinary");
 const fileUpload = require("express-fileupload");
-const courseRoutes = require("./routes/Course");
+
 const certificateRoutes = require("./routes/Certificate");
 
 const aiRoutes = require("./routes/AI");
@@ -57,7 +57,7 @@ app.use("/api/v1/reach", contactUsRoute);
 app.use("/api/v1/ai", aiRoutes);
 
 
-app.use("/api/v1/course", courseRoutes);
+
 app.use("/api/v1/certificate", certificateRoutes);
 
 
