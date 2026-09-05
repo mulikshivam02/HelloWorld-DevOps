@@ -81,64 +81,119 @@ exports.generateCertificate = async (req, res) => {
       `attachment; filename="certificate-${course.courseName.replace(/\s+/g, "-")}.pdf"`
     )
 
-    const doc = new PDFDocument({ layout: "landscape", size: "A4", margin: 50 })
+        const doc = new PDFDocument({ layout: "landscape", size: "A4", margin: 50 })
     doc.pipe(res)
 
-    doc
-      .lineWidth(3)
-      .strokeColor("#F1A93A")
-      .rect(20, 20, doc.page.width - 40, doc.page.height - 40)
-      .stroke()
+    const W = doc.page.width
+    const H = doc.page.height
+    const GOLD = "#FFD60A"
+    const DARK = "#000814"
+    const SLATE = "#2C333F"
+    const GRAY = "#6E727F"
 
-    doc
-      .fontSize(36)
-      .fillColor("#2C333F")
-      .font("Helvetica-Bold")
-      .text("Certificate of Completion", 0, 100, { align: "center" })
+    // ---- Double border frame ----
+    doc.lineWidth(2).strokeColor(GOLD).rect(20, 20, W - 40, H - 40).stroke()
+    doc.lineWidth(0.75).strokeColor(DARK).rect(30, 30, W - 60, H - 60).stroke()
 
-    doc
-      .fontSize(14)
-      .font("Helvetica")
-      .fillColor("#555")
-      .text("This certifies that", 0, 170, { align: "center" })
-
-    doc
-      .fontSize(30)
-      .font("Helvetica-Bold")
-      .fillColor("#000")
-      .text(certificate.studentName, 0, 200, { align: "center" })
-
-    doc
-      .fontSize(14)
-      .font("Helvetica")
-      .fillColor("#555")
-      .text("has successfully completed the course", 0, 250, { align: "center" })
-
+    // ---- Logo mark (drawn, not an image file - "H" monogram) ----
+    doc.circle(70, 72, 22).fill(DARK)
     doc
       .fontSize(22)
       .font("Helvetica-Bold")
-      .fillColor("#000")
-      .text(certificate.courseName, 0, 280, { align: "center" })
+      .fillColor(GOLD)
+      .text("H", 58, 61, { width: 24, align: "center" })
+
+    doc
+      .fontSize(20)
+      .font("Helvetica-Bold")
+      .fillColor(DARK)
+      .text("HelloWorld", 102, 56)
+    doc
+      .fontSize(9)
+      .font("Helvetica")
+      .fillColor(GRAY)
+      .text("Online Learning Platform", 102, 79)
+
+    // ---- Title ----
+    doc
+      .fontSize(34)
+      .font("Times-Bold")
+      .fillColor(DARK)
+      .text("Certificate of Completion", 0, 135, { align: "center" })
+
+    // ---- Divider with center diamond ----
+    const dividerY = 182
+    doc.lineWidth(1.5).strokeColor(GOLD)
+      .moveTo(W / 2 - 140, dividerY).lineTo(W / 2 - 8, dividerY).stroke()
+      .moveTo(W / 2 + 8, dividerY).lineTo(W / 2 + 140, dividerY).stroke()
+    doc.save()
+    doc.translate(W / 2, dividerY)
+    doc.rotate(45)
+    doc.rect(-5, -5, 10, 10).fill(GOLD)
+    doc.restore()
+
+    // ---- Body ----
+    doc
+      .fontSize(13)
+      .font("Times-Italic")
+      .fillColor(GRAY)
+      .text("This is to certify that", 0, 205, { align: "center" })
+
+    doc
+      .fontSize(28)
+      .font("Times-Bold")
+      .fillColor(DARK)
+      .text(certificate.studentName, 0, 228, { align: "center" })
+
+    const nameWidth = doc.widthOfString(certificate.studentName, { font: "Times-Bold", size: 28 })
+    doc.lineWidth(1).strokeColor(GOLD)
+      .moveTo(W / 2 - nameWidth / 2, 262).lineTo(W / 2 + nameWidth / 2, 262).stroke()
+
+    doc
+      .fontSize(13)
+      .font("Times-Roman")
+      .fillColor(GRAY)
+      .text("has successfully completed the course", 0, 275, { align: "center" })
+
+    doc
+      .fontSize(20)
+      .font("Times-Bold")
+      .fillColor(SLATE)
+      .text(certificate.courseName, 0, 297, { align: "center" })
 
     if (certificate.instructorName) {
       doc
-        .fontSize(12)
-        .font("Helvetica")
-        .fillColor("#555")
-        .text(`Instructor: ${certificate.instructorName}`, 0, 330, { align: "center" })
+        .fontSize(11)
+        .font("Times-Italic")
+        .fillColor(GRAY)
+        .text(`Instructor: ${certificate.instructorName}`, 0, 332, { align: "center" })
     }
 
-    doc
-      .fontSize(11)
-      .fillColor("#777")
-      .text(`Issued on ${certificate.issuedDate.toDateString()}`, 70, doc.page.height - 130)
+    // ---- Footer: date + code (left), seal (center), QR (right) ----
+    const footerY = H - 130
 
-    doc
-      .fontSize(11)
-      .fillColor("#777")
-      .text(`Verification Code: ${certificate.verificationCode}`, 70, doc.page.height - 110)
+    doc.fontSize(8).font("Helvetica-Bold").fillColor(GRAY).text("ISSUED ON", 70, footerY)
+    doc.fontSize(12).font("Helvetica").fillColor(DARK)
+      .text(certificate.issuedDate.toDateString(), 70, footerY + 14)
 
-    doc.image(qrBuffer, doc.page.width - 160, doc.page.height - 160, { width: 90 })
+    doc.fontSize(8).font("Helvetica-Bold").fillColor(GRAY).text("VERIFICATION CODE", 70, footerY + 40)
+    doc.fontSize(13).font("Courier-Bold").fillColor(DARK)
+      .text(certificate.verificationCode, 70, footerY + 54)
+
+    // Seal
+    const sealX = W / 2
+    const sealY = H - 95
+    doc.circle(sealX, sealY, 38).lineWidth(2).strokeColor(GOLD).stroke()
+    doc.circle(sealX, sealY, 30).fill(DARK)
+    doc.fontSize(9).font("Helvetica-Bold").fillColor(GOLD)
+      .text("HELLOWORLD", sealX - 35, sealY - 12, { width: 70, align: "center" })
+    doc.fontSize(7).font("Helvetica").fillColor(GOLD)
+      .text("VERIFIED", sealX - 35, sealY + 2, { width: 70, align: "center" })
+
+    // QR
+    doc.image(qrBuffer, W - 150, footerY + 5, { width: 80 })
+    doc.fontSize(8).font("Helvetica").fillColor(GRAY)
+      .text("Scan to verify", W - 150, footerY + 88, { width: 80, align: "center" })
 
     doc.end()
   } catch (error) {
