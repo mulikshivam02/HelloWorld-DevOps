@@ -251,10 +251,6 @@ GitHub: [@mulikshivam02](https://github.com/mulikshivam02)
 
 Project: [HelloWorld DevOps](https://github.com/mulikshivam02/HelloWorld-DevOps)
 
-## 📄 License
-
-Add a `LICENSE` file if you intend to distribute this project under an open-source license.
-
 ---
 
 **Built to explore the complete journey from application code to automated deployment and observability.**
