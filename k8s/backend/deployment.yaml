@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/mulikshivam02/helloworld-devops/backend:090dd245304d5535201abfd3937fabc3134fc357
+          image: ghcr.io/mulikshivam02/helloworld-devops/backend:e906a453587d27a469bd49a4689aac0444400215
           ports:
             - containerPort: 4000
           envFrom:
